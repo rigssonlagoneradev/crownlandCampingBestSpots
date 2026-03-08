@@ -5,14 +5,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Crownland Camping Best Spots</title>
 
-<link rel="stylesheet" href="style.css"/>
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f5f5f5;
+}
+
+header{
+background:#2e5e3e;
+color:white;
+padding:20px;
+text-align:center;
+}
+
+.controls{
+padding:10px;
+text-align:center;
+background:#eee;
+}
+
+#map{
+height:60vh;
+}
+
+#list{
+padding:20px;
+background:white;
+}
+
+.spot{
+border-bottom:1px solid #ddd;
+padding:10px 0;
+}
+
+.spot a{
+color:#2e5e3e;
+font-weight:bold;
+text-decoration:none;
+}
+
+footer{
+background:#1f3d2a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+</style>
 
 </head>
 
@@ -40,19 +88,32 @@
 
 <div id="map"></div>
 
+<div id="list">
+<h2>Camping Coordinates</h2>
+<div id="spotList"></div>
+</div>
+
 <footer>
-<div class="footer-content">
 <p>Website Copyright Created by:<br>
 <strong>Rigsson Lagonera</strong></p>
 
 <p>Camping Spots are all thanks to:<br>
 <strong>Ryan Epp</strong></p>
-</div>
 </footer>
 
-<script src="spots.js"></script>
-
 <script>
+
+// SAMPLE DATA (replace with your full list)
+const spots = [
+
+{lat:51.5714078,lng:-114.9846127,area:"Burnt Timber",desc:""},
+{lat:51.5750865,lng:-114.9907744,area:"Burnt Timber",desc:""},
+{lat:49.7975444,lng:-114.1533099,area:"Dutch Creek",desc:""},
+{lat:50.298577,lng:-114.232322,area:"Indian Graves",desc:""},
+{lat:49.9682872,lng:-114.1230761,area:"Porcupine Hills",desc:""},
+{lat:51.2242373,lng:-114.6601251,area:"Waiporous",desc:""}
+
+];
 
 const street = L.tileLayer(
 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -60,8 +121,8 @@ const street = L.tileLayer(
 );
 
 const satellite = L.tileLayer(
-'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-{maxZoom:17}
+'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+{maxZoom:19}
 );
 
 const map=L.map('map',{
@@ -70,78 +131,122 @@ zoom:7,
 layers:[street]
 });
 
-const baseMaps={
+L.control.layers({
 "Map":street,
-"Terrain":satellite
-};
-
-L.control.layers(baseMaps).addTo(map);
+"Satellite":satellite
+}).addTo(map);
 
 let cluster = L.markerClusterGroup();
 
-function loadSpots(area="All"){
+let userLocation=null;
 
-cluster.clearLayers()
+function getDistance(lat1,lon1,lat2,lon2){
+
+const R=6371;
+
+const dLat=(lat2-lat1)*Math.PI/180;
+const dLon=(lon2-lon1)*Math.PI/180;
+
+const a=
+Math.sin(dLat/2)*Math.sin(dLat/2)+
+Math.cos(lat1*Math.PI/180)*
+Math.cos(lat2*Math.PI/180)*
+Math.sin(dLon/2)*Math.sin(dLon/2);
+
+const c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+
+return (R*c).toFixed(1);
+
+}
 
 spots.forEach((spot)=>{
 
-if(area !== "All" && spot.area !== area) return;
-
 const marker=L.marker([spot.lat,spot.lng]);
 
-let popupContent = `<b>${spot.area}</b>`;
+let distance="";
 
-if(spot.desc && spot.desc.trim() !== ""){
-popupContent += `<br>${spot.desc}<br><br>`;
-}else{
-popupContent += `<br><br>`;
+if(userLocation){
+distance=`<br>${getDistance(userLocation.lat,userLocation.lng,spot.lat,spot.lng)} km away`
 }
 
-popupContent += `
+marker.bindPopup(`
+<b>${spot.area}</b>
+${distance}
+<br><br>
+<a target="_blank"
+href="https://www.google.com/maps?q=${spot.lat},${spot.lng}">
+Open in Google Maps
+</a>
+`);
+
+cluster.addLayer(marker);
+
+});
+
+map.addLayer(cluster);
+
+function locateUser(){
+
+navigator.geolocation.getCurrentPosition((pos)=>{
+
+const lat=pos.coords.latitude;
+const lng=pos.coords.longitude;
+
+userLocation={lat,lng};
+
+map.setView([lat,lng],10);
+
+L.marker([lat,lng])
+.addTo(map)
+.bindPopup("You are here")
+.openPopup();
+
+renderList();
+
+})
+
+}
+
+function renderList(){
+
+const filter=document.getElementById("areaFilter").value;
+
+const container=document.getElementById("spotList");
+
+container.innerHTML="";
+
+spots.forEach((spot)=>{
+
+if(filter!=="All" && spot.area!==filter) return;
+
+let distance="";
+
+if(userLocation){
+distance=` • ${getDistance(userLocation.lat,userLocation.lng,spot.lat,spot.lng)} km away`;
+}
+
+const div=document.createElement("div");
+
+div.className="spot";
+
+div.innerHTML=`
+<b>${spot.area}</b><br>
+${spot.lat}, ${spot.lng}${distance}<br>
 <a target="_blank"
 href="https://www.google.com/maps?q=${spot.lat},${spot.lng}">
 Open in Google Maps
 </a>
 `;
 
-marker.bindPopup(popupContent);
+container.appendChild(div);
 
-cluster.addLayer(marker);
-
-})
-
-map.addLayer(cluster)
+});
 
 }
 
-loadSpots()
+document.getElementById("areaFilter").addEventListener("change",renderList);
 
-document.getElementById("areaFilter").addEventListener("change",(e)=>{
-loadSpots(e.target.value)
-})
-
-function locateUser(){
-
-if(!navigator.geolocation){
-alert("Geolocation not supported")
-return
-}
-
-navigator.geolocation.getCurrentPosition((pos)=>{
-
-const lat=pos.coords.latitude
-const lng=pos.coords.longitude
-
-map.setView([lat,lng],10)
-
-L.marker([lat,lng])
-.addTo(map)
-.bindPopup("You are here")
-.openPopup()
-
-})
-
-}
+renderList();
 
 </script>
 
