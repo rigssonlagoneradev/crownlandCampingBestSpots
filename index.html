@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crownland Camping</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
+text-align:center;
+}
+
+header{
+background:#2e5e3e;
+color:white;
+padding:20px;
+}
+
+#map{
+height:50vh;
+width:100%;
+}
+
+.container{
+padding:15px;
+max-width:650px;
+margin:auto;
+}
+
+select,button{
+padding:10px;
+margin:8px auto;
+width:100%;
+max-width:350px;
+display:block;
+}
+
+.site{
+border-bottom:1px solid #ddd;
+padding:12px 0;
+}
+
+footer{
+background:#1f3d2a;
+color:white;
+padding:20px;
+margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>🌲 Crownland Camping 🌲</h2>
+<h3>Best Spots for Beginners</h3>
+</header>
+
+<div id="map"></div>
+
+<p>Tap a pin to open Google Maps navigation</p>
+
+<div class="container">
+
+<h3>Camping Sites</h3>
+
+<button onclick="locateUser()">Find Camping Near Me</button>
+
+<select id="areaFilter" onchange="renderList()">
+<option value="All">All Areas</option>
+<option value="Burnt Timber">Burnt Timber</option>
+<option value="Dutch Creek">Dutch Creek</option>
+<option value="Indian Graves">Indian Graves</option>
+<option value="Porcupine Hills">Porcupine Hills</option>
+<option value="Waiporous">Waiporous</option>
+</select>
+
+<div id="list"></div>
+
+</div>
+
+<footer>
+<p><strong>Website created by Rigsson Lagonera ©2026</strong></p>
+<p>Camping spots provided by <strong>Ryan Epp</strong></p>
+<p>This is a free community‑driven website. Contributions are welcome.</p>
+<p>Email: <a href="mailto:rigssonlagonera@gmail.com">rigssonlagonera@gmail.com</a></p>
+</footer>
+
+<script src="spots.js"></script>
+
+</body>
+</html>
