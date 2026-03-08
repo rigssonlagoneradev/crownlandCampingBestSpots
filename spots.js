@@ -251,6 +251,9 @@ allSpots.forEach(s=>{
 
 const m=L.marker([s.lat,s.lng]).addTo(map);
 
+m.area = s.area;
+m.desc = s.desc;
+
 const id=`${s.lat},${s.lng}`;
 
 m.buildPopup=function(){
