@@ -1,8 +1,5 @@
 document.addEventListener("DOMContentLoaded", function(){
 
-
-document.addEventListener("DOMContentLoaded", function(){
-
 const data={
 "Burnt Timber":[
 {"lat":51.5714078,"lng":-114.9846127,"desc":"The main road running through this area is all gravel but maintained. Lots of oil or natural gas pumping and compressor stations in the area as well as active logging."},
