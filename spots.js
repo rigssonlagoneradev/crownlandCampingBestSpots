@@ -271,6 +271,19 @@ div.innerHTML=`
 <a target="_blank" href="https://maps.google.com/?q=${s.lat},${s.lng}">Open in Google Maps</a>
 `;
 
+div.style.cursor="pointer";
+
+div.onclick=function(){
+
+map.setView([s.lat,s.lng],14);
+
+L.popup()
+.setLatLng([s.lat,s.lng])
+.setContent(`<b>${s.area}</b><br>${s.desc}`)
+.openOn(map);
+
+};
+
 list.appendChild(div);
 
 });
