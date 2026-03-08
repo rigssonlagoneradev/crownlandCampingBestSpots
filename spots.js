@@ -286,7 +286,7 @@ L.popup()
 
 // force scroll back to map
 window.scrollTo({
-top: document.getElementById("map").offsetTop - 10,
+top: document.getElementById("map").offsetTop,
 behavior: "smooth"
 });
 
