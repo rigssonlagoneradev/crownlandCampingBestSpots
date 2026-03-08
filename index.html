@@ -42,8 +42,11 @@
 
 <footer>
 <div class="footer-content">
-<p>Website Copyright by:<br><strong>Rigsson Lagonera</strong></p>
-<p>Contents are all thanks to:<br><strong>Ryan Epp</strong></p>
+<p>Website Copyright Created by:<br>
+<strong>Rigsson Lagonera</strong></p>
+
+<p>Camping Spots are all thanks to:<br>
+<strong>Ryan Epp</strong></p>
 </div>
 </footer>
 
@@ -80,20 +83,28 @@ function loadSpots(area="All"){
 
 cluster.clearLayers()
 
-spots.forEach((spot,i)=>{
+spots.forEach((spot)=>{
 
-if(area!=="All" && spot.area!==area) return;
+if(area !== "All" && spot.area !== area) return;
 
 const marker=L.marker([spot.lat,spot.lng]);
 
-marker.bindPopup(`
-<b>${spot.area}</b><br>
-${spot.desc || ""}<br><br>
+let popupContent = `<b>${spot.area}</b>`;
+
+if(spot.desc && spot.desc.trim() !== ""){
+popupContent += `<br>${spot.desc}<br><br>`;
+}else{
+popupContent += `<br><br>`;
+}
+
+popupContent += `
 <a target="_blank"
 href="https://www.google.com/maps?q=${spot.lat},${spot.lng}">
 Open in Google Maps
 </a>
-`);
+`;
+
+marker.bindPopup(popupContent);
 
 cluster.addLayer(marker);
 
@@ -133,16 +144,6 @@ L.marker([lat,lng])
 }
 
 </script>
-
-  <footer>
-  <div class="footer-content">
-    <p>Website Copyright Created by:<br>
-    <strong>Rigsson Lagonera</strong></p>
-
-    <p>Camping Spots are all thanks to:<br>
-    <strong>Ryan Epp</strong></p>
-  </div>
-</footer>
 
 </body>
 </html>
