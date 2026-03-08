@@ -8,7 +8,12 @@
 <link rel="stylesheet" href="style.css"/>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
 </head>
 
 <body>
@@ -18,48 +23,126 @@
 <p>Tap a pin to open Google Maps navigation</p>
 </header>
 
+<div class="controls">
+
+<select id="areaFilter">
+<option value="All">All Areas</option>
+<option value="Burnt Timber">Burnt Timber</option>
+<option value="Dutch Creek">Dutch Creek</option>
+<option value="Indian Graves">Indian Graves</option>
+<option value="Porcupine Hills">Porcupine Hills</option>
+<option value="Waiporous">Waiporous</option>
+</select>
+
+<button onclick="locateUser()">Find Camping Near Me</button>
+
+</div>
+
 <div id="map"></div>
 
-<section id="list">
-<h2>Camping Coordinates</h2>
-<ul id="spotList"></ul>
-</section>
+<footer>
+<div class="footer-content">
+<p>Website Copyright by:<br><strong>Rigsson Lagonera</strong></p>
+<p>Contents are all thanks to:<br><strong>Ryan Epp</strong></p>
+</div>
+</footer>
 
 <script src="spots.js"></script>
 
 <script>
 
-const map = L.map('map').setView([51.0, -114.5], 7);
-
-L.tileLayer(
+const street = L.tileLayer(
 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-{ maxZoom: 18 }
-).addTo(map);
+{maxZoom:19}
+);
 
-spots.forEach((spot, index)=>{
+const satellite = L.tileLayer(
+'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+{maxZoom:17}
+);
 
-const marker = L.marker([spot.lat, spot.lng]).addTo(map);
+const map=L.map('map',{
+center:[51,-114.5],
+zoom:7,
+layers:[street]
+});
+
+const baseMaps={
+"Map":street,
+"Terrain":satellite
+};
+
+L.control.layers(baseMaps).addTo(map);
+
+let cluster = L.markerClusterGroup();
+
+function loadSpots(area="All"){
+
+cluster.clearLayers()
+
+spots.forEach((spot,i)=>{
+
+if(area!=="All" && spot.area!==area) return;
+
+const marker=L.marker([spot.lat,spot.lng]);
 
 marker.bindPopup(`
-<b>Camping Spot ${index+1}</b><br>
-<a href="https://www.google.com/maps?q=${spot.lat},${spot.lng}" target="_blank">
+<b>${spot.area}</b><br>
+${spot.desc || ""}<br><br>
+<a target="_blank"
+href="https://www.google.com/maps?q=${spot.lat},${spot.lng}">
 Open in Google Maps
 </a>
 `);
 
-const li = document.createElement("li");
+cluster.addLayer(marker);
 
-li.innerHTML = `
-<a href="https://www.google.com/maps?q=${spot.lat},${spot.lng}" target="_blank">
-${spot.lat}, ${spot.lng}
-</a>
-`;
+})
 
-document.getElementById("spotList").appendChild(li);
+map.addLayer(cluster)
 
-});
+}
+
+loadSpots()
+
+document.getElementById("areaFilter").addEventListener("change",(e)=>{
+loadSpots(e.target.value)
+})
+
+function locateUser(){
+
+if(!navigator.geolocation){
+alert("Geolocation not supported")
+return
+}
+
+navigator.geolocation.getCurrentPosition((pos)=>{
+
+const lat=pos.coords.latitude
+const lng=pos.coords.longitude
+
+map.setView([lat,lng],10)
+
+L.marker([lat,lng])
+.addTo(map)
+.bindPopup("You are here")
+.openPopup()
+
+})
+
+}
 
 </script>
+
+  <footer>
+  <div class="footer-content">
+    <p>Website Copyright Created by:<br>
+    <strong>Rigsson Lagonera</strong></p>
+
+    <p>Camping Spots are all thanks to:<br>
+    <strong>Ryan Epp</strong></p>
+  </div>
+</footer>
 
 </body>
 </html>
