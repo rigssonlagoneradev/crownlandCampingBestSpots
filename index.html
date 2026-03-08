@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crownland Camping Best Spots</title>
+
+<link rel="stylesheet" href="style.css"/>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+
+<body>
+
+<header>
+<h1>🌲 Crownland Camping Best Spots</h1>
+<p>Tap a pin to open Google Maps navigation</p>
+</header>
+
+<div id="map"></div>
+
+<section id="list">
+<h2>Camping Coordinates</h2>
+<ul id="spotList"></ul>
+</section>
+
+<script src="spots.js"></script>
+
+<script>
+
+const map = L.map('map').setView([51.0, -114.5], 7);
+
+L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{ maxZoom: 18 }
+).addTo(map);
+
+spots.forEach((spot, index)=>{
+
+const marker = L.marker([spot.lat, spot.lng]).addTo(map);
+
+marker.bindPopup(`
+<b>Camping Spot ${index+1}</b><br>
+<a href="https://www.google.com/maps?q=${spot.lat},${spot.lng}" target="_blank">
+Open in Google Maps
+</a>
+`);
+
+const li = document.createElement("li");
+
+li.innerHTML = `
+<a href="https://www.google.com/maps?q=${spot.lat},${spot.lng}" target="_blank">
+${spot.lat}, ${spot.lng}
+</a>
+`;
+
+document.getElementById("spotList").appendChild(li);
+
+});
+
+</script>
+
+</body>
+</html>
