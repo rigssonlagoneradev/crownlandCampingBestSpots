@@ -275,7 +275,7 @@ div.style.cursor="pointer";
 
 div.onclick=function(){
 
-// zoom map to location
+// zoom to the location
 map.setView([s.lat,s.lng],14);
 
 // open popup
@@ -284,9 +284,10 @@ L.popup()
 .setContent(`<b>${s.area}</b><br>${s.desc}`)
 .openOn(map);
 
-// scroll page back to map
-document.getElementById("map").scrollIntoView({
-behavior:"smooth"
+// force scroll back to map
+window.scrollTo({
+top: document.getElementById("map").offsetTop - 10,
+behavior: "smooth"
 });
 
 };
