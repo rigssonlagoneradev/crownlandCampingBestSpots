@@ -162,7 +162,40 @@ favs.push(id);
 localStorage.setItem("favorites",JSON.stringify(favs));
 
 renderList();
-map.closePopup();
+
+// reopen popup so it refreshes the button text
+map.eachLayer(function(layer){
+if(layer instanceof L.Marker){
+
+const lat = layer.getLatLng().lat;
+const lng = layer.getLatLng().lng;
+const markerId = `${lat},${lng}`;
+
+if(markerId === id){
+
+const favs = getFavorites();
+const saved = favs.includes(id);
+
+layer.setPopupContent(`
+<b>${layer.options.area || ""}</b><br>
+
+<a target="_blank" href="https://maps.google.com/?q=${lat},${lng}">
+Open in Google Maps
+</a>
+
+&nbsp;&nbsp;
+
+<button onclick="event.stopPropagation(); toggleFavorite('${id}')">
+${saved ? "⭐ Saved" : "⭐ Save Favorite"}
+</button>
+`);
+
+layer.openPopup();
+
+}
+
+}
+});
 
 }
 
