@@ -267,8 +267,18 @@ div.className="site";
 div.innerHTML=`
 <b>Area:</b> ${s.area}<br>
 <b>Description:</b> ${s.desc}<br>
+
 <b>Satellite Imagery:</b><br>
-<a target="_blank" href="https://maps.google.com/?q=${s.lat},${s.lng}">Open in Google Maps</a>
+
+<a target="_blank" href="https://maps.google.com/?q=${s.lat},${s.lng}">
+Open in Google Maps
+</a>
+
+<br><br>
+
+<button onclick="toggleFavorite('${s.lat},${s.lng}')">
+⭐ Save Favorite
+</button>
 `;
 
 div.style.cursor="pointer";
@@ -310,6 +320,57 @@ const lng=pos.coords.longitude;
 map.setView([lat,lng],10);
 
 L.marker([lat,lng]).addTo(map).bindPopup("You are here").openPopup();
+
+});
+
+};
+
+function getFavorites(){
+return JSON.parse(localStorage.getItem("favorites") || "[]");
+}
+
+function toggleFavorite(id){
+
+let favs=getFavorites();
+
+if(favs.includes(id)){
+favs=favs.filter(f=>f!==id);
+}else{
+favs.push(id);
+}
+
+localStorage.setItem("favorites",JSON.stringify(favs));
+
+alert("Favorite updated ⭐");
+
+}
+
+window.showFavorites=function(){
+
+const list=document.getElementById("list");
+list.innerHTML="";
+
+const favs=getFavorites();
+
+allSpots.forEach(s=>{
+
+const id=`${s.lat},${s.lng}`;
+
+if(!favs.includes(id)) return;
+
+const div=document.createElement("div");
+div.className="site";
+
+div.innerHTML=`
+<b>Area:</b> ${s.area}<br>
+<b>Description:</b> ${s.desc}<br>
+
+<a target="_blank" href="https://maps.google.com/?q=${s.lat},${s.lng}">
+Open in Google Maps
+</a>
+`;
+
+list.appendChild(div);
 
 });
 
