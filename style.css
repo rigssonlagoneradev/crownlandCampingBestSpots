@@ -42,5 +42,19 @@ font-weight:bold;
 #map{
 height:80vh;
 }
+footer{
+background:#1f3d2a;
+color:white;
+text-align:center;
+padding:25px 15px;
+margin-top:40px;
+}
 
+.footer-content p{
+margin:10px 0;
+font-size:14px;
+}
+
+footer strong{
+font-size:16px;
 }
