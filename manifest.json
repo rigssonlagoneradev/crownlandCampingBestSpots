@@ -2,7 +2,7 @@
 "name": "Crownland Camping",
 "short_name": "Camping",
 "start_url": "https://rigssonlagoneradev.github.io/crownlandCampingBestSpots/",
-"scope": "/crownlandCampingBestSpots/",
+"scope": "https://rigssonlagoneradev.github.io/crownlandCampingBestSpots/",
 "display": "standalone",
 "background_color": "#2e5e3e",
 "theme_color": "#2e5e3e",
