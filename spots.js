@@ -354,7 +354,7 @@ L.marker([lat,lng]).addTo(map).bindPopup("You are here").openPopup();
 
 /* FAVORITE TOGGLE */
 
-function toggleFavorite(id){
+window.toggleFavorite=function (id){
 
 let favs=getFavorites();
 
