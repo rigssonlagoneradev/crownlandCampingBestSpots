@@ -257,7 +257,7 @@ Open in Google Maps
 &nbsp;&nbsp;
 
 <button onclick="event.stopPropagation(); toggleFavorite('${id}')">
-${saved ? "⭐ Saved" : "⭐ Save"}
+${saved ? "⭐ Saved" : "⭐ Save Favorite"}
 </button>
 `);
 
@@ -269,7 +269,7 @@ window.renderList=function(){
 const filter=document.getElementById("areaFilter").value;
 const list=document.getElementById("list");
 
-list.innerHTML="";
+list.innerHTML=""; 
 
 allSpots.forEach(s=>{
 
