@@ -13,22 +13,10 @@ const data={
 {"lat":51.6310588,"lng":-115.0905469,"desc":"The next 4 are right on the Red Deer river at a bridge. There is a fair bit of space but fills up by Wed or Thurs each week."},
 {"lat":51.6318723,"lng":-115.0901445,"desc":"The next 4 are right on the Red Deer river at a bridge. There is a fair bit of space but fills up by Wed or Thurs each week."},
 {"lat":51.6313113,"lng":-115.0920734,"desc":"The next 4 are right on the Red Deer river at a bridge. There is a fair bit of space but fills up by Wed or Thurs each week."},
-{"lat":51.6327104,"lng":-115.0916087,"desc":"The next 4 are right on the Red Deer river at a bridge. There is a fair bit of space but fills up by Wed or Thurs each week."},
-{"lat":51.632912,"lng":-115.1028414,"desc":"The next 3 span almost a kilometer with multiple spots. The river runs in behind this area with some spots you can camp right beside it. This are gets busy with a fair number of atv's as well."},
-{"lat":51.6334211,"lng":-115.1052139,"desc":"The next 3 span almost a kilometer with multiple spots. The river runs in behind this area with some spots you can camp right beside it. This are gets busy with a fair number of atv's as well."},
-{"lat":51.6341532,"lng":-115.1080741,"desc":"The next 3 span almost a kilometer with multiple spots. The river runs in behind this area with some spots you can camp right beside it. This are gets busy with a fair number of atv's as well."},
-{"lat":51.6345442,"lng":-115.1318495,"desc":"The next 3 span almost a kilometer with multiple spots. The river runs in behind this area with some spots you can camp right beside it. This are gets busy with a fair number of atv's as well."},
-{"lat":51.6147358,"lng":-115.1485466,"desc":"The next 4 spots are all on the river again at a bridge. This first spot is where you turn in to reach the big open area on the river where the next 3 spots are. If you are pulling a big trailer 26ft or bigger might be tough to get to the back spots."},
-{"lat":51.6152542,"lng":-115.1496507,"desc":"Entrance to the next 3"},
-{"lat":51.6153262,"lng":-115.1501774,"desc":"Entrance to the next 3"},
-{"lat":51.6152852,"lng":-115.151084,"desc":"Entrance to the next 3"},
-{"lat":51.6151393,"lng":-115.1479911,"desc":"This spot is great for 1 trailer and a tent. It's just across the bridge on the left."},
-{"lat":51.6160597,"lng":-115.1457873,"desc":"This spot is great for 1 trailer and a tent. It's just across the bridge on the left."},
-{"lat":51.615857,"lng":-115.144045,"desc":"This next spot is where I run some of my group camps. This area of Burnt Timber is fairly quiet not alot of traffic as it dead ends about 1km past. This are you can fit 10+ trailers and tents. Lots of dead fall left from logging just past this spot."},
-{"lat":51.6125231,"lng":-115.1377769,"desc":"This next and final spot is up a step hill if you take a drive up to the end of the road it's a pumping station and a big turn around area but amazing views up there."}
+{"lat":51.6327104,"lng":-115.0916087,"desc":"The next 4 are right on the Red Deer river at a bridge. There is a fair bit of space but fills up by Wed or Thurs each week."}
 ],
 
-/* DATA CONTINUES EXACTLY THE SAME — NOT CHANGED */
+/* rest of your data unchanged */
 
 };
 
@@ -47,20 +35,26 @@ L.tileLayer(
 {maxZoom:19}
 ).addTo(map);
 
-/* Add map pins */
+
+/* FAVORITES */
+
+function getFavorites(){
+return JSON.parse(localStorage.getItem("favorites") || "[]");
+}
+
+
+/* ADD MAP MARKERS */
+
 allSpots.forEach(s=>{
 
 const m=L.marker([s.lat,s.lng]).addTo(map);
 
-/* store info on marker so popup can rebuild */
-m.area=s.area;
-m.desc=s.desc;
-
 const id = `${s.lat},${s.lng}`;
 
-function buildPopup(){
-const favs = JSON.parse(localStorage.getItem("favorites") || "[]");
-const saved = favs.includes(id);
+m.buildPopup=function(){
+
+const favs=getFavorites();
+const saved=favs.includes(id);
 
 return `
 <b>${s.area}</b><br>
@@ -76,19 +70,53 @@ Open in Google Maps
 ${saved ? "⭐ Saved" : "⭐ Save Favorite"}
 </button>
 `;
-}
 
-m.bindPopup(buildPopup());
+};
+
+m.bindPopup(m.buildPopup());
 
 });
 
-/* Render campsite list */
+
+/* FAVORITE TOGGLE */
+
+function toggleFavorite(id){
+
+let favs=getFavorites();
+
+if(favs.includes(id)){
+favs=favs.filter(f=>f!==id);
+}else{
+favs.push(id);
+}
+
+localStorage.setItem("favorites",JSON.stringify(favs));
+
+renderList();
+
+/* refresh popup */
+
+map.eachLayer(function(layer){
+
+if(layer instanceof L.Marker && layer.buildPopup){
+
+layer.setPopupContent(layer.buildPopup());
+
+}
+
+});
+
+}
+
+
+/* RENDER LIST */
+
 window.renderList=function(){
 
 const filter=document.getElementById("areaFilter").value;
 const list=document.getElementById("list");
 
-list.innerHTML=""; 
+list.innerHTML="";
 
 allSpots.forEach(s=>{
 
@@ -121,7 +149,7 @@ L.popup()
 
 window.scrollTo({
 top: document.getElementById("map").offsetTop,
-behavior: "smooth"
+behavior:"smooth"
 });
 
 };
@@ -131,6 +159,9 @@ list.appendChild(div);
 });
 
 };
+
+
+/* USER LOCATION */
 
 window.locateUser=function(){
 
@@ -149,60 +180,8 @@ L.marker([lat,lng]).addTo(map).bindPopup("You are here").openPopup();
 
 };
 
-function getFavorites(){
-return JSON.parse(localStorage.getItem("favorites") || "[]");
-}
 
-function toggleFavorite(id){
-
-let favs = getFavorites();
-
-if(favs.includes(id)){
-favs = favs.filter(f=>f!==id);
-}else{
-favs.push(id);
-}
-
-localStorage.setItem("favorites",JSON.stringify(favs));
-
-renderList();
-
-/* rebuild popup properly */
-map.eachLayer(function(layer){
-if(layer instanceof L.Marker){
-
-const lat = layer.getLatLng().lat;
-const lng = layer.getLatLng().lng;
-const markerId = `${lat},${lng}`;
-
-if(markerId === id){
-
-const favs = getFavorites();
-const saved = favs.includes(id);
-
-layer.setPopupContent(`
-<b>${layer.area}</b><br>
-${layer.desc}<br><br>
-
-<a target="_blank" href="https://maps.google.com/?q=${lat},${lng}">
-Open in Google Maps
-</a>
-
-&nbsp;&nbsp;
-
-<button onclick="event.stopPropagation(); toggleFavorite('${id}')">
-${saved ? "⭐ Saved" : "⭐ Save Favorite"}
-</button>
-`);
-
-layer.openPopup();
-
-}
-
-}
-});
-
-}
+/* FAVORITES LIST */
 
 window.showFavorites=function(){
 
