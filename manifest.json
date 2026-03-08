@@ -1,7 +1,8 @@
 {
 "name": "Crownland Camping",
 "short_name": "Camping",
-"start_url": "/",
+"start_url": "/crownlandCampingBestSpots/index.html",
+"scope": "/crownlandCampingBestSpots/",
 "display": "standalone",
 "background_color": "#2e5e3e",
 "theme_color": "#2e5e3e",
