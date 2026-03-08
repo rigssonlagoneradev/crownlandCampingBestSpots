@@ -268,7 +268,7 @@ Open in Google Maps
 
 &nbsp;&nbsp;
 
-<button onclick="toggleFavorite('${id}')">
+<button onclick="window.toggleFavorite('${id}')">
 ${saved ? "⭐ Saved" : "⭐ Save Favorite"}
 </button>
 `;
