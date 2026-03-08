@@ -1,5 +1,3 @@
-<script>
-
 const data = {"Burnt Timber": [{"lat": 51.5714078, "lng": -114.9846127, "desc": "The main road running through this area is all gravel but maintained. Lots of oil or natural gas pumping and compressor stations in the area as well as active logging."},
                                {"lat": 51.5750865, "lng": -114.9907744, "desc": "This is the South entrance beside the old gas plant."},
                                {"lat": 51.5760831, "lng": -114.9913866, "desc": "This and the next 2 spots are almost like a staging area. It's a huge space. It can also get fairly muddy in this field."},
@@ -103,5 +101,3 @@ function locateUser(){
    L.marker([lat,lng]).addTo(map).bindPopup("You are here").openPopup();
  })
 }
-
-</script>
