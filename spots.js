@@ -241,11 +241,25 @@ allSpots.forEach(s=>{
 
 const m=L.marker([s.lat,s.lng]).addTo(map);
 
-m.bindPopup(
-`<b>${s.area}</b><br>
+const id = `${s.lat},${s.lng}`;
+const favs = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+const saved = favs.includes(id);
+
+m.bindPopup(`
+<b>${s.area}</b><br>
 ${s.desc}<br><br>
-<a target="_blank" href="https://maps.google.com/?q=${s.lat},${s.lng}">Open in Google Maps</a>`
-);
+
+<a target="_blank" href="https://maps.google.com/?q=${s.lat},${s.lng}">
+Open in Google Maps
+</a>
+
+&nbsp;&nbsp;
+
+<button onclick="event.stopPropagation(); toggleFavorite('${id}')">
+${saved ? "⭐ Saved" : "⭐ Save"}
+</button>
+`);
 
 });
 
@@ -274,11 +288,6 @@ div.innerHTML=`
 Open in Google Maps
 </a>
 
-<br><br>
-
-<button onclick="toggleFavorite('${s.lat},${s.lng}')">
-⭐ Save Favorite
-</button>
 `;
 
 div.style.cursor="pointer";
