@@ -52,6 +52,10 @@ allSpots.forEach(s=>{
 
 const m=L.marker([s.lat,s.lng]).addTo(map);
 
+/* store info on marker so popup can rebuild */
+m.area=s.area;
+m.desc=s.desc;
+
 const id = `${s.lat},${s.lng}`;
 
 function buildPopup(){
@@ -163,7 +167,7 @@ localStorage.setItem("favorites",JSON.stringify(favs));
 
 renderList();
 
-// reopen popup so it refreshes the button text
+/* rebuild popup properly */
 map.eachLayer(function(layer){
 if(layer instanceof L.Marker){
 
@@ -177,7 +181,8 @@ const favs = getFavorites();
 const saved = favs.includes(id);
 
 layer.setPopupContent(`
-<b>${layer.options.area || ""}</b><br>
+<b>${layer.area}</b><br>
+${layer.desc}<br><br>
 
 <a target="_blank" href="https://maps.google.com/?q=${lat},${lng}">
 Open in Google Maps
