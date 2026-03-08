@@ -384,6 +384,17 @@ list.appendChild(div);
 });
 
 };
+function toggleFavorite(id){
+
+let favs = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+if(favs.includes(id)){
+favs = favs.filter(f => f !== id);
+}else{
+favs.push(id);
+}
+
+localStorage.setItem("favorites", JSON.stringify(favs));
 
 renderList();
 
