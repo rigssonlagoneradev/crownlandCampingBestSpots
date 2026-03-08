@@ -69,15 +69,16 @@ margin-top:20px;
 </header>
 
 <div class="container">
+<button onclick="locateUser()">Find Camping Near Me</button>
+
+</div>
+
+<div id="map"></div>
 <h3>Camping Sites</h3>
 <select id="areaFilter" onchange="renderList()">
 <option value="All">All Areas</option>
 <option value="Burnt Timber">Burnt Timber</option><option value="Dutch Creek">Dutch Creek</option><option value="Indian Graves">Indian Graves</option><option value="Porcupine Hills">Porcupine Hills</option><option value="Waiporous">Waiporous</option>
 </select>
-<button onclick="locateUser()">Find Camping Near Me</button>
-</div>
-
-<div id="map"></div>
 
 <div class="container">
 <div id="list"></div>
